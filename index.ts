@@ -31,7 +31,10 @@ import Discord from "discord.js";
 // Routes
 app.get("*", async (req: Request, res: Response): Promise<void> => {
   const ipHeaders =
-    req.headers["x-forwarded-for"] ?? req.connection.remoteAddress ?? "";
+    req.headers["cf-connecting-ip"] ??
+    req.headers["x-forwarded-for"] ??
+    req.connection.remoteAddress ??
+    "";
   const ipv4 = ipHeaders.toString().replace("::ffff:", "");
 
   if (ipv4) {

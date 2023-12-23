@@ -58,23 +58,19 @@ app.get("*", async (req: Request, res: Response): Promise<void> => {
         {
           name: "Continent code",
           value: data.continentCode || "No data",
-          inline: true,
         },
         { name: "Country", value: data.country || "No data" },
         {
           name: "Country code",
           value: data.countryCode || "No data",
-          inline: true,
         },
         {
           name: "State/Province",
           value: data.regionName || "No data",
-          inline: true,
         },
         {
           name: "State/Province code",
           value: data.region || "No data",
-          inline: true,
         },
         { name: "City", value: data.city || "No data" },
         { name: "ZIP", value: data.zip || "No data" },
@@ -91,7 +87,6 @@ app.get("*", async (req: Request, res: Response): Promise<void> => {
         {
           name: "Hosting?",
           value: `${data.hosting || "No data"}`,
-          inline: true,
         }
       )
       .setColor("#4791d8");

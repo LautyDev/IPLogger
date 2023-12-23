@@ -48,6 +48,8 @@ $ pnpm start
 # The server will initialize in the <http://localhost:5000>
 ```
 
+Made with :heart: by <a href="https://github.com/LautyDev" target="_blank">LautyDev</a>
+
 &#xa0;
 
 <a href="#top">Back to top</a>

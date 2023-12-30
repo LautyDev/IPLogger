@@ -19,12 +19,9 @@ app.set("json spaces", 2);
 app.set("trust proxy", true);
 
 // Middlewares
-app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Use Helmet middleware with CSP configuration
 app.use(
   helmet({
     contentSecurityPolicy: {

@@ -24,6 +24,18 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Use Helmet middleware with CSP configuration
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://www.youtube.com"],
+      },
+    },
+  })
+);
+
 // Colors
 var colors = require("colors/safe");
 
@@ -45,7 +57,18 @@ app.get("*", async (req: Request, res: Response): Promise<void> => {
     const info = await axios.get(url);
     const data = info.data;
 
-    res.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    res.set("Content-Type", "text/html; charset=utf-8");
+    res.send(`<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <title>Redirect</title>
+        </head>
+        <body style="background-color: black">
+          <script>
+              window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+          </script>
+        </body>
+        </html>`);
 
     // Discord
     const webhookClient = new Discord.WebhookClient({

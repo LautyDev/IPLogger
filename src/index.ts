@@ -6,9 +6,6 @@ import helmet from "helmet";
 import { createServer } from "http";
 import "dotenv/config";
 
-// External typings imports
-import type { Request, Response } from "express";
-
 // App
 const app = express();
 const server = createServer(app);
@@ -40,7 +37,7 @@ var colors = require("colors/safe");
 import Discord from "discord.js";
 
 // Routes
-app.get("*", async (req: Request, res: Response): Promise<void> => {
+app.get("*", async (req, res): Promise<void> => {
   const ipHeaders =
     req.headers["cf-connecting-ip"] ??
     req.headers["x-forwarded-for"] ??

